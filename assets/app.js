@@ -8,6 +8,7 @@
   const loaderText = loader.querySelector('p');
   const cards = document.querySelectorAll('.work-card');
   let lastFocused = null;
+  let playbackStarted = false;
 
   const showLoader = (text = '正在加载…') => {
     loaderText.textContent = text;
@@ -16,10 +17,11 @@
 
   const hideLoader = () => loader.classList.add('is-hidden');
 
-  video.addEventListener('waiting', () => showLoader('正在缓冲…'));
-  video.addEventListener('stalled', () => showLoader('网络较慢，正在缓冲…'));
-  video.addEventListener('canplay', hideLoader);
-  video.addEventListener('playing', hideLoader);
+  video.addEventListener('waiting', () => { if (!playbackStarted) showLoader('正在缓冲…'); });
+  video.addEventListener('stalled', () => { if (!playbackStarted) showLoader('网络较慢，正在缓冲…'); });
+  video.addEventListener('canplay', () => { if (!playbackStarted) hideLoader(); });
+  video.addEventListener('playing', () => { playbackStarted = true; hideLoader(); });
+  video.addEventListener('timeupdate', () => { if (video.currentTime > 0.1) { playbackStarted = true; hideLoader(); } });
   video.addEventListener('error', () => showLoader('视频加载失败，请刷新重试'));
 
   const closePlayer = () => {
@@ -37,6 +39,7 @@
       video.poster = poster ? poster.src : '';
       video.src = card.dataset.video;
       video.preload = 'auto';
+      playbackStarted = false;
       showLoader();
       document.body.classList.add('player-open');
       if (typeof dialog.showModal === 'function') dialog.showModal();
@@ -54,6 +57,7 @@
     document.body.classList.remove('player-open');
     video.removeAttribute('src');
     video.preload = 'none';
+    playbackStarted = false;
     video.load();
     hideLoader();
     if (lastFocused) lastFocused.focus();
@@ -80,5 +84,6 @@
     revealTargets.forEach((element) => element.classList.add('is-visible'));
   }
 })();
+
 
 
