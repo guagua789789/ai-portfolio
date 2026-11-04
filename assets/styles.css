@@ -358,3 +358,31 @@ button { color: inherit; font: inherit; }
   .hero-owner::before { width: 25px; }
 }
 
+
+.player-video-wrap { position: relative; min-height: 220px; }
+.video-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #000;
+  color: #d8dadd;
+  font-size: 10px;
+  letter-spacing: .12em;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+.video-loader.is-hidden { opacity: 0; visibility: hidden; }
+.video-loader p { margin: 0; }
+.video-loader-spinner {
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: video-spin .8s linear infinite;
+}
+@keyframes video-spin { to { transform: rotate(360deg); } }
